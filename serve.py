@@ -10,11 +10,15 @@ from socketio.mixins import BroadcastMixin
 
 class CPUNamespace(BaseNamespace, BroadcastMixin):
     def recv_connect(self):
-        def sendcpu():
-            while True:
-                self.emit('cpu_data', [random.randint(0,100)])
-                gevent.sleep(1)
-        self.spawn(sendcpu)
+        self.emit('Welcome to socket.io')
+
+    def on_left(self):
+        self.emit('key_data', 'B')
+        print "LEFT"
+
+    def on_right(self):
+        self.emit('key_data', 'F')
+        print "RIGHT"
 
 
 class Application(object):

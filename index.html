@@ -21,7 +21,9 @@ var canvas1 = d3.select("#left"),
     height = canvas1.property("height"),
     image = context1.createImageData(width, height),
     imglt = document.getElementById("imgleft"),
-    imgrt = document.getElementById("imgright");
+    imgrt = document.getElementById("imgright"),
+    initialFloodSpeed = 20;
+    floodSpeed = initialFloodSpeed;
   /* BG of image: black */
   for (var i = 0; i < image.data.length; i+= 4) {
       image.data[i + 0] = 0;
@@ -74,7 +76,7 @@ worker.addEventListener("message", function(event) {
   }
 
   d3.timer(function() {
-    for (var i = 0, done; i < 200 && !(done = flood()); ++i);
+    for (var i = 0, done; i < floodSpeed && !(done = flood()); ++i);
     context1.putImageData(image, 0, 0);
     context2.putImageData(image, 0, 0);
     if (done) { location.reload(); };
@@ -84,12 +86,27 @@ worker.addEventListener("message", function(event) {
 });
 
 var socket = io.connect('/cpu');
-
 // Update the graph when we get new data from the server
-socket.on('cpu_data', function(data) {
-    console.log(data);
+socket.on('key_data', function(data) {
+    var upcoef = 1.2, downcoef = 1.5, min = 2, max = 500;
+    if (data == 'F') {
+        floodSpeed = Math.min(floodSpeed * upcoef, max);
+    } else if (data == 'B') {
+        floodSpeed = Math.max(floodSpeed / downcoef, min);
+    }
+    console.log(data); console.log(floodSpeed);
 });
-
+// Every second, move to the middle via averaging
+window.setInterval(function() { floodSpeed = (3 * floodSpeed + initialFloodSpeed) / 4; }, 5000);
+// Send a key_press up to the server
+document.addEventListener("keydown", function (e) {
+    var keyCode = e.keyCode;
+    if (keyCode == 37) {
+        socket.emit('left');
+    } else if (keyCode == 39) {
+        socket.emit('right');
+    }
+}, false);
 
 </script>
 </body>
