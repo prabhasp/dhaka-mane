@@ -1,24 +1,32 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <body>
-<img src="static/dhaka.jpg" width="960" height="500" style="position:absolute; left:0; top:0"></img>
-<canvas style="position:absolute; left: 0; top: 0" width="960" height="500"></canvas>
+<div style="position:relative;width:1200px; height: 400px"> 
+  <img src="static/img/dhaka.jpg" width="600" height="400" style="position:absolute; left:0; top:0"></img>
+  <img src="static/img/dhaka_tiled.jpg" width="600" height="400" style="position:absolute; right:0; top:0"></img>
+  <canvas id="left" style="position:absolute; left: 0; top: 0" width="600" height="400"></canvas>
+  <canvas id="right" style="position:absolute; right: 0; top: 0" width="600" height="400"></canvas>
+</div>
 <script src="static/socket.io.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
-var canvas = d3.select("canvas"),
-    context = canvas.node().getContext("2d"),
-    width = canvas.property("width"),
-    height = canvas.property("height"),
-    image = context.createImageData(width, height);
+var canvas1 = d3.select("#left"),
+    canvas2 = d3.select("#right"),
+    context1 = canvas1.node().getContext("2d"),
+    context2 = canvas2.node().getContext("2d"),
+    width = canvas1.property("width"),
+    height = canvas1.property("height"),
+    image = context1.createImageData(width, height);
   /* BG of image: black */
   for (var i = 0; i < image.data.length; i+= 4) {
       image.data[i + 0] = 0;
       image.data[i + 1] = 0;
       image.data[i + 2] = 0;
       image.data[i + 3] = 255;
-  }; context.putImageData(image, 0, 0);
+  }; 
+  context1.putImageData(image, 0, 0);
+  context2.putImageData(image, 0, 0);
 
 
 var worker = new Worker("static/generate-randomized-depth-first-traversal.js");
@@ -61,7 +69,8 @@ worker.addEventListener("message", function(event) {
 
   d3.timer(function() {
     for (var i = 0, done; i < 20 && !(done = flood()); ++i);
-    context.putImageData(image, 0, 0);
+    context1.putImageData(image, 0, 0);
+    context2.putImageData(image, 0, 0);
     return done;
   });
 
