@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<body>
+<body style="background:black">
 <div style="position:relative;width:1200px; height: 400px"> 
-  <img src="static/img/dhaka.jpg" width="600" height="400" style="position:absolute; left:0; top:0"></img>
-  <img src="static/img/dhaka_tiled.jpg" width="600" height="400" style="position:absolute; right:0; top:0"></img>
+  <img id="imgleft" src="static/img/dhaka.jpg" width="600" height="400" 
+       style="position:absolute; left:0; top:0; visibility: hidden;"></img>
+  <img id="imgright" src="static/img/dhaka_tiled.jpg" width="600" height="400" 
+       style="position:absolute; right:0; top:0; visibility: hidden;"></img>
   <canvas id="left" style="position:absolute; left: 0; top: 0" width="600" height="400"></canvas>
   <canvas id="right" style="position:absolute; right: 0; top: 0" width="600" height="400"></canvas>
 </div>
@@ -17,7 +19,9 @@ var canvas1 = d3.select("#left"),
     context2 = canvas2.node().getContext("2d"),
     width = canvas1.property("width"),
     height = canvas1.property("height"),
-    image = context1.createImageData(width, height);
+    image = context1.createImageData(width, height),
+    imglt = document.getElementById("imgleft"),
+    imgrt = document.getElementById("imgright");
   /* BG of image: black */
   for (var i = 0; i < image.data.length; i+= 4) {
       image.data[i + 0] = 0;
@@ -27,6 +31,8 @@ var canvas1 = d3.select("#left"),
   }; 
   context1.putImageData(image, 0, 0);
   context2.putImageData(image, 0, 0);
+  imglt.style.visibility = "visible";
+  imgrt.style.visibility = "visible";
 
 
 var worker = new Worker("static/generate-randomized-depth-first-traversal.js");
@@ -68,9 +74,10 @@ worker.addEventListener("message", function(event) {
   }
 
   d3.timer(function() {
-    for (var i = 0, done; i < 20 && !(done = flood()); ++i);
+    for (var i = 0, done; i < 200 && !(done = flood()); ++i);
     context1.putImageData(image, 0, 0);
     context2.putImageData(image, 0, 0);
+    if (done) { location.reload(); };
     return done;
   });
 
@@ -82,7 +89,6 @@ var socket = io.connect('/cpu');
 socket.on('cpu_data', function(data) {
     console.log(data);
 });
-
 
 
 </script>

@@ -11,10 +11,9 @@ from socketio.mixins import BroadcastMixin
 class CPUNamespace(BaseNamespace, BroadcastMixin):
     def recv_connect(self):
         def sendcpu():
-
             while True:
-                sel.emit('cpu_data', {random.ranint(0,100)})
-                gevent.sleep(0.1)
+                self.emit('cpu_data', [random.randint(0,100)])
+                gevent.sleep(1)
         self.spawn(sendcpu)
 
 
