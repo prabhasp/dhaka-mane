@@ -42,11 +42,16 @@ function generateMaze(cellWidth, cellHeight) {
       cells[i0] |= d0, cells[i1] |= d1;
 
       var m = 0;
-      if (y1 > 0 && cells[i1 - cellWidth] == null) frontier.push({index: i1, direction: N}), ++m;
-      if (y1 < cellHeight - 1 && cells[i1 + cellWidth] == null) frontier.push({index: i1, direction: S}), ++m;
-      if (x1 > 0 && cells[i1 - 1] == null) frontier.push({index: i1, direction: W}), ++m;
-      if (x1 < cellWidth - 1 && cells[i1 + 1] == null) frontier.push({index: i1, direction: E}), ++m;
+      if (y1 > 0 && cells[i1 - cellWidth] == null)
+        frontier.push({index: i1, direction: N}), ++m;
+      if (y1 < cellHeight - 1 && cells[i1 + cellWidth] == null)
+        frontier.push({index: i1, direction: S}), ++m;
+      if (x1 > 0 && cells[i1 - 1] == null)
+        frontier.push({index: i1, direction: W}), ++m;
+      if (x1 < cellWidth - 1 && cells[i1 + 1] == null)
+        frontier.push({index: i1, direction: E}), ++m;
       shuffle(frontier, frontier.length - m, frontier.length);
+      if (frontier.length < 10) console.log(frontier.length);
     }
   }
 }
