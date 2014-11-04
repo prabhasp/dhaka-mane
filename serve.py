@@ -1,16 +1,25 @@
 from gevent import monkey; monkey.patch_all()
 import gevent
 import random
+import serial
 
 from socketio import socketio_manage
 from socketio.server import SocketIOServer
 from socketio.namespace import BaseNamespace
 from socketio.mixins import BroadcastMixin
-
-
+ser = serial.Serial('/dev/ttyUSB1', 19200, timeout=100)
+ 
 class CPUNamespace(BaseNamespace, BroadcastMixin):
     def recv_connect(self):
-        self.emit('Welcome to socket.io')
+	def send_ser():
+		while 1:
+			print "waiting..."
+			x = ser.read()
+			if len(x) > 0:
+				print ord(x), x
+				self.emit('key_data', ord(x))
+			gevent.sleep(0.1)
+	self.spawn(send_ser)
 
     def on_left(self):
         self.emit('key_data', 'B')
