@@ -89,15 +89,15 @@ var socket = io.connect('/cpu');
 // Update the graph when we get new data from the server
 socket.on('key_data', function(data) {
     var upcoef = 1.2, downcoef = 1.5, min = 2, max = 500;
-    if (data == 'F') {
+    if (data == 120) {
         floodSpeed = Math.min(floodSpeed * upcoef, max);
-    } else if (data == 'B') {
+    } else if (data == 24) {
         floodSpeed = Math.max(floodSpeed / downcoef, min);
     }
     console.log(data); console.log(floodSpeed);
 });
 // Every second, move to the middle via averaging
-window.setInterval(function() { floodSpeed = (3 * floodSpeed + initialFloodSpeed) / 4; }, 5000);
+// window.setInterval(function() { floodSpeed = (3 * floodSpeed + initialFloodSpeed) / 4; }, 5000);
 // Send a key_press up to the server
 document.addEventListener("keydown", function (e) {
     var keyCode = e.keyCode;

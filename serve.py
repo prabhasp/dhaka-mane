@@ -18,6 +18,7 @@ class CPUNamespace(BaseNamespace, BroadcastMixin):
 			if len(x) > 0:
 				print ord(x), x
 				self.emit('key_data', ord(x))
+			ser.flushInput()
 			gevent.sleep(0.1)
 	self.spawn(send_ser)
 
