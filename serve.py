@@ -7,7 +7,8 @@ from socketio import socketio_manage
 from socketio.server import SocketIOServer
 from socketio.namespace import BaseNamespace
 from socketio.mixins import BroadcastMixin
-ser = serial.Serial('/dev/ttyUSB1', 19200, timeout=100)
+#ser = serial.Serial('/dev/ttyUSB1', 19200, timeout=100)
+ser = None
  
 class CPUNamespace(BaseNamespace, BroadcastMixin):
     def recv_connect(self):
@@ -48,6 +49,10 @@ class Application(object):
                 content_type = "text/javascript"
             elif path.endswith(".css"):
                 content_type = "text/css"
+            elif path.endswith(".jpg"):
+                content_type = "image/jpeg"
+            elif path.endswith(".png"):
+                content_type = "image/png"
             else:
                 content_type = "text/html"
 

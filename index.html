@@ -2,9 +2,10 @@
 <meta charset="utf-8">
 <body style="background:black">
 <div style="position:relative;width:800px; height: 600px"> 
-  <img id="img" src="static/img/dhaka_hajari.png" width="800" height="600" 
+  <img id="img" src="static/img/dhaka.jpg" width="800" height="600" 
        style="position:absolute; left:0; top:0; visibility: hidden;"></img>
   <canvas id="canvas" style="position:absolute; left: 0; top: 0" width="800" height="600"></canvas>
+  <canvas id="trans-c" width="800" height="600" style="position:absolute; top: 600; visibility: hidden"></canvas>
 </div>
 <script src="static/socket.io.js"></script>
 <script src="static/d3.v3.min.js"></script>
@@ -27,6 +28,15 @@ var canvas = d3.select("#canvas"),
   }; 
   context.putImageData(image, 0, 0);
   img.style.visibility = "visible";
+  /* Load the transparency canvas */
+  var transparentContext = d3.select('#trans-c').node().getContext("2d"),
+      timg = new Image(),
+      tmask = null;
+  timg.src = 'static/img/hajari_black.png';
+  timg.onload = function() {
+    transparentContext.drawImage(timg, 0, 0, 800, 600);
+    tmask = transparentContext.getImageData(0, 0, width, height);
+  };
 
 var worker = new Worker("static/generate-randomized-depth-first-traversal.js");
 worker.postMessage({width: width, height: height});
@@ -51,7 +61,8 @@ worker.addEventListener("message", function(event) {
 
     for (var i = 0; i < n0; ++i) {
       i0 = frontier[i] << 2;
-      image.data[i0 + 3] = 0;
+      if (tmask.data[i0 + 3])
+          image.data[i0 + 3] = 0;
     }
 
     for (var i = 0; i < n0; ++i) {
