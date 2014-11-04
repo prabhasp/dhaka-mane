@@ -1,27 +1,21 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <body style="background:black">
-<div style="position:relative;width:1200px; height: 400px"> 
-  <img id="imgleft" src="static/img/dhaka.jpg" width="600" height="400" 
+<div style="position:relative;width:800px; height: 600px"> 
+  <img id="img" src="static/img/dhaka_hajari.png" width="800" height="600" 
        style="position:absolute; left:0; top:0; visibility: hidden;"></img>
-  <img id="imgright" src="static/img/dhaka_tiled.jpg" width="600" height="400" 
-       style="position:absolute; right:0; top:0; visibility: hidden;"></img>
-  <canvas id="left" style="position:absolute; left: 0; top: 0" width="600" height="400"></canvas>
-  <canvas id="right" style="position:absolute; right: 0; top: 0" width="600" height="400"></canvas>
+  <canvas id="canvas" style="position:absolute; left: 0; top: 0" width="800" height="600"></canvas>
 </div>
 <script src="static/socket.io.js"></script>
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="static/d3.v3.min.js"></script>
 <script>
 
-var canvas1 = d3.select("#left"),
-    canvas2 = d3.select("#right"),
-    context1 = canvas1.node().getContext("2d"),
-    context2 = canvas2.node().getContext("2d"),
-    width = canvas1.property("width"),
-    height = canvas1.property("height"),
-    image = context1.createImageData(width, height),
-    imglt = document.getElementById("imgleft"),
-    imgrt = document.getElementById("imgright"),
+var canvas = d3.select("#canvas"),
+    context = canvas.node().getContext("2d"),
+    width = canvas.property("width"),
+    height = canvas.property("height"),
+    image = context.createImageData(width, height),
+    img = document.getElementById("img"),
     initialFloodSpeed = 20;
     floodSpeed = initialFloodSpeed;
   /* BG of image: black */
@@ -31,11 +25,8 @@ var canvas1 = d3.select("#left"),
       image.data[i + 2] = 0;
       image.data[i + 3] = 255;
   }; 
-  context1.putImageData(image, 0, 0);
-  context2.putImageData(image, 0, 0);
-  imglt.style.visibility = "visible";
-  imgrt.style.visibility = "visible";
-
+  context.putImageData(image, 0, 0);
+  img.style.visibility = "visible";
 
 var worker = new Worker("static/generate-randomized-depth-first-traversal.js");
 worker.postMessage({width: width, height: height});
@@ -77,8 +68,7 @@ worker.addEventListener("message", function(event) {
 
   d3.timer(function() {
     for (var i = 0, done; i < floodSpeed && !(done = flood()); ++i);
-    context1.putImageData(image, 0, 0);
-    context2.putImageData(image, 0, 0);
+    context.putImageData(image, 0, 0);
     if (done) { location.reload(); };
     return done;
   });
@@ -89,15 +79,15 @@ var socket = io.connect('/cpu');
 // Update the graph when we get new data from the server
 socket.on('key_data', function(data) {
     var upcoef = 1.2, downcoef = 1.5, min = 2, max = 500;
-    if (data == 120) {
+    if (data == 'F') {
         floodSpeed = Math.min(floodSpeed * upcoef, max);
-    } else if (data == 24) {
+    } else if (data == 'B') {
         floodSpeed = Math.max(floodSpeed / downcoef, min);
     }
     console.log(data); console.log(floodSpeed);
 });
 // Every second, move to the middle via averaging
-// window.setInterval(function() { floodSpeed = (3 * floodSpeed + initialFloodSpeed) / 4; }, 5000);
+window.setInterval(function() { floodSpeed = (3 * floodSpeed + initialFloodSpeed) / 4; }, 5000);
 // Send a key_press up to the server
 document.addEventListener("keydown", function (e) {
     var keyCode = e.keyCode;

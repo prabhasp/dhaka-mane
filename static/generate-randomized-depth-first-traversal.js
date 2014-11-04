@@ -51,7 +51,6 @@ function generateMaze(cellWidth, cellHeight) {
       if (x1 < cellWidth - 1 && cells[i1 + 1] == null)
         frontier.push({index: i1, direction: E}), ++m;
       shuffle(frontier, frontier.length - m, frontier.length);
-      if (frontier.length < 10) console.log(frontier.length);
     }
   }
 }
