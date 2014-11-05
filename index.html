@@ -37,7 +37,9 @@ var canvas = d3.select("#canvas"),
   img.src = 'static/img/dhaka' + Math.floor(Math.random() * 9) + '.jpg';
   /* Load the transparency canvas */
   var transparentContext = d3.select('#trans-c').node().getContext("2d"),
-      timgSrces = ['hajari.png', 'dragon_fly.png', 'grass.png', 'madal.png', 'kite.png', 'cycle.png', 'macha.png'];
+      timgSrces = ['mask_cycle.png', 'mask_dragon.png', 'mask_grass.png',
+                   'mask_hajari.png', 'mask_kite.png', 'mask_macha.png',
+                   'mask_madal.png'];
       timg = new Image(),
       tmask = null;
   timg.src = 'static/maneimg/' + randEl(timgSrces);
