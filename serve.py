@@ -48,6 +48,10 @@ class Application(object):
                 content_type = "text/javascript"
             elif path.endswith(".css"):
                 content_type = "text/css"
+            elif path.endswith(".jpg"):
+                content_type = "image/jpeg"
+            elif path.endswith(".png"):
+                content_type = "image/png"
             else:
                 content_type = "text/html"
 
