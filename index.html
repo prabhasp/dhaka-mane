@@ -22,38 +22,26 @@ var canvas = d3.select("#canvas"),
     height = canvas.property("height"),
     image = context.createImageData(width, height),
     img = new Image(),
-    initialFloodSpeed = 20;
-    floodSpeed = initialFloodSpeed;
+    timg = new Image(),
+    tmask, dhakapx,
+    initialFloodSpeed = 20,
+    floodSpeed = initialFloodSpeed,
+    dContext = d3.select('#dhaka-c').node().getContext("2d"),
+    timgSrces = ['mask_cycle.png', 'mask_dragon.png', 'mask_grass.png',
+                 'mask_hajari.png', 'mask_kite.png', 'mask_macha.png',
+                 'mask_madal.png', 'mask_swing.png'];
 
-  /* BG of image: black
-  for (var i = 0; i < image.data.length; i+= 4) {
-      image.data[i + 0] = 0;
-      image.data[i + 1] = 0;
-      image.data[i + 2] = 0;
-      image.data[i + 3] = 255;
-  }; 
-  context.putImageData(image, 0, 0); */
   /* Dhaka image: set src and make visible */
   img.src = 'static/img/dhaka' + Math.floor(Math.random() * 9) + '.jpg';
-  var dContext = d3.select('#dhaka-c').node().getContext("2d"),
-      dhakapx;
   img.onload = function() {
       dContext.drawImage(img, 0, 0, width, height);
       dhakapx = dContext.getImageData(0, 0, width, height);
-      console.log(dhakapx);
   };
   /* Load the transparency canvas */
-  var transparentContext = d3.select('#trans-c').node().getContext("2d"),
-      timgSrces = ['mask_cycle.png', 'mask_dragon.png', 'mask_grass.png',
-                   'mask_hajari.png', 'mask_kite.png', 'mask_macha.png',
-                   'mask_madal.png', 'mask_swing.png'];
-      timg = new Image(),
-      tmask = null;
   timg.src = 'static/maneimg/' + randEl(timgSrces);
-  console.log(timg.src);
   timg.onload = function() {
-    transparentContext.drawImage(timg, 0, 0, width, height);
-    tmask = transparentContext.getImageData(0, 0, width, height);
+    dContext.drawImage(timg, 0, 0, width, height);
+    tmask = dContext.getImageData(0, 0, width, height);
   };
 
 var worker = new Worker("static/generate-randomized-depth-first-traversal.js");
