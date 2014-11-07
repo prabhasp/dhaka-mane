@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<body style="background:black">
-<div style="position:relative;width:800px; height: 600px"> 
-  <img id="img" src="static/img/dhaka1.jpg" width="800" height="600" 
+<body style="background:black; overflow: hidden">
+<div style="position:relative;width:1280px; height: 800px; overflow: hidden;"> 
+  <img id="img" src="static/img/dhaka1.jpg" width="1280" height="800" 
        style="position:absolute; left:0; top:0; visibility: hidden;"></img>
-  <canvas id="canvas" style="position:absolute; left: 0; top: 0" width="800" height="600"></canvas>
-  <canvas id="trans-c" width="800" height="600" style="position:absolute; top: 600; visibility: hidden"></canvas>
+  <canvas id="canvas" style="position:absolute; left: 0; top: 0" width="1280" height="800"></canvas>
+  <canvas id="trans-c" width="1280" height="800" style="position:absolute; top: 800; visibility: hidden"></canvas>
 </div>
 <script src="static/socket.io.js"></script>
 <script src="static/d3.v3.min.js"></script>
@@ -45,7 +45,7 @@ var canvas = d3.select("#canvas"),
   timg.src = 'static/maneimg/' + randEl(timgSrces);
   console.log(timg.src);
   timg.onload = function() {
-    transparentContext.drawImage(timg, 0, 0, 800, 600);
+    transparentContext.drawImage(timg, 0, 0, 1280, 800);
     tmask = transparentContext.getImageData(0, 0, width, height);
   };
 
