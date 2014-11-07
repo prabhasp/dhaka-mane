@@ -7,7 +7,7 @@ from socketio import socketio_manage
 from socketio.server import SocketIOServer
 from socketio.namespace import BaseNamespace
 from socketio.mixins import BroadcastMixin
-ser = serial.Serial('/dev/ttyUSB1', 19200, timeout=100)
+ser = serial.Serial('/dev/ttyUSB0', 19200, timeout=100)
  
 class CPUNamespace(BaseNamespace, BroadcastMixin):
     def recv_connect(self):
