@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<body style="background:black">
-<div style="position:relative;width:800px; height: 600px"> 
-  <img id="paper" src="static/img/paper.jpg" width="800" height="600" 
+<body style="background:black; overflow: hidden;">
+<div style="position:relative;width:1280px; height: 800px; overflow: hidden;"> 
+  <img id="paper" src="static/img/paper.jpg" width="1280" height="800" 
        style="position:absolute; left:0; top:0;"></img>
-  <canvas id="canvas" style="position:absolute; left: 0; top: 0" width="800" height="600"></canvas>
-  <canvas id="trans-c" width="800" height="600" style="position:absolute; top: 600; visibility: hidden"></canvas>
-  <canvas id="dhaka-c" width="800" height="600" style="position:absolute; top: 600; visibility: hidden"></canvas>
+  <canvas id="canvas" style="position:absolute; left: 0; top: 0" width="1280" height="800"></canvas>
+  <canvas id="trans-c" width="1280" height="800" style="position:absolute; top: 800; visibility: hidden"></canvas>
+  <canvas id="dhaka-c" width="1280" height="800" style="position:absolute; top: 800; visibility: hidden"></canvas>
 </div>
 <script src="static/socket.io.js"></script>
 <script src="static/d3.v3.min.js"></script>
@@ -24,7 +24,7 @@ var canvas = d3.select("#canvas"),
     img = new Image(),
     timg = new Image(),
     tmask, dhakapx,
-    initialFloodSpeed = 20,
+    initialFloodSpeed = 0,
     floodSpeed = initialFloodSpeed,
     dContext = d3.select('#dhaka-c').node().getContext("2d"),
     timgSrces = ['mask_cycle.png', 'mask_dragon.png', 'mask_grass.png',
