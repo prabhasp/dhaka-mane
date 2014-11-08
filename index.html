@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<body style="background:black; overflow: hidden">
-<div style="position:relative;width:1280px; height: 800px; overflow: hidden;"> 
-  <img id="img" src="static/img/dhaka1.jpg" width="1280" height="800" 
-       style="position:absolute; left:0; top:0; visibility: hidden;"></img>
-  <canvas id="canvas" style="position:absolute; left: 0; top: 0" width="1280" height="800"></canvas>
-  <canvas id="trans-c" width="1280" height="800" style="position:absolute; top: 800; visibility: hidden"></canvas>
+<body style="background:black">
+<div style="position:relative;width:800px; height: 600px"> 
+  <img id="paper" src="static/img/paper.jpg" width="800" height="600" 
+       style="position:absolute; left:0; top:0;"></img>
+  <canvas id="canvas" style="position:absolute; left: 0; top: 0" width="800" height="600"></canvas>
+  <canvas id="trans-c" width="800" height="600" style="position:absolute; top: 600; visibility: hidden"></canvas>
+  <canvas id="dhaka-c" width="800" height="600" style="position:absolute; top: 600; visibility: hidden"></canvas>
 </div>
 <script src="static/socket.io.js"></script>
 <script src="static/d3.v3.min.js"></script>
@@ -20,33 +21,27 @@ var canvas = d3.select("#canvas"),
     width = canvas.property("width"),
     height = canvas.property("height"),
     image = context.createImageData(width, height),
-    img = document.getElementById("img"),
-    initialFloodSpeed = 0;
-    floodSpeed = initialFloodSpeed;
+    img = new Image(),
+    timg = new Image(),
+    tmask, dhakapx,
+    initialFloodSpeed = 20,
+    floodSpeed = initialFloodSpeed,
+    dContext = d3.select('#dhaka-c').node().getContext("2d"),
+    timgSrces = ['mask_cycle.png', 'mask_dragon.png', 'mask_grass.png',
+                 'mask_hajari.png', 'mask_kite.png', 'mask_macha.png',
+                 'mask_madal.png', 'mask_swing.png'];
 
-  /* BG of image: black */
-  for (var i = 0; i < image.data.length; i+= 4) {
-      image.data[i + 0] = 128;
-      image.data[i + 1] = 128;
-      image.data[i + 2] = 128;
-      image.data[i + 3] = 255;
-  }; 
-  context.putImageData(image, 0, 0);
   /* Dhaka image: set src and make visible */
-  img.style.visibility = "visible";
   img.src = 'static/img/dhaka' + Math.floor(Math.random() * 9) + '.jpg';
+  img.onload = function() {
+      dContext.drawImage(img, 0, 0, width, height);
+      dhakapx = dContext.getImageData(0, 0, width, height);
+  };
   /* Load the transparency canvas */
-  var transparentContext = d3.select('#trans-c').node().getContext("2d"),
-      timgSrces = ['mask_cycle.png', 'mask_dragon.png', 'mask_grass.png',
-                   'mask_hajari.png', 'mask_kite.png', 'mask_macha.png',
-                   'mask_madal.png', 'mask_swing.png'];
-      timg = new Image(),
-      tmask = null;
   timg.src = 'static/maneimg/' + randEl(timgSrces);
-  console.log(timg.src);
   timg.onload = function() {
-    transparentContext.drawImage(timg, 0, 0, 1280, 800);
-    tmask = transparentContext.getImageData(0, 0, width, height);
+    dContext.drawImage(timg, 0, 0, width, height);
+    tmask = dContext.getImageData(0, 0, width, height);
   };
 
 var worker = new Worker("static/generate-randomized-depth-first-traversal.js");
@@ -72,13 +67,15 @@ worker.addEventListener("message", function(event) {
 
     for (var i = 0; i < n0; ++i) {
       i0 = frontier[i] << 2;
-      if (tmask && tmask.data[i0 + 3])
-          image.data[i0 + 3] = 0;
-      else {
-	  image.data[i0 + 0] = 0;
-	  image.data[i0 + 1] = 0;
-	  image.data[i0 + 2] = 0;
-	  image.data[i0 + 3] = 255;
+      if (tmask && tmask.data[i0 + 3]) {
+          image.data[i0 + 0] = dhakapx.data[i0 + 0];
+          image.data[i0 + 1] = dhakapx.data[i0 + 1];
+          image.data[i0 + 2] = dhakapx.data[i0 + 2];
+          image.data[i0 + 3] = dhakapx.data[i0 + 3];
+          //image.data[i0 + 3] = 0;
+      } else {
+          image.data[i0 + 0] = image.data[i0 + 1] = image.data[i0 + 2] = 0;
+          image.data[i0 + 3] = 255;
       }
     }
 
