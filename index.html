@@ -104,9 +104,11 @@ var socket = io.connect('/cpu');
 var lastUpdate = Date.now();
 // Update the graph when we get new data from the server
 socket.on('key_data', function(data) {
-    if (data == 120 || data == 24 || 
-	data == "B" || data == "F") {
-	floodSpeed = 100;
+    if (data == 120 || data == 24 || data == "B" || data == "F") {
+	if(floodSpeed < 100)
+		floodSpeed = Math.min(100, (floodSpeed + 1) * 4);
+	else
+		floodSpeed = floodSpeed + 10;
 	lastUpdate = Date.now()
 	console.log(floodSpeed);
     }
@@ -114,7 +116,7 @@ socket.on('key_data', function(data) {
 // Every 200 ms, check if last update was a long time ago. If so, stop.
 window.setInterval(function() { 
     if (Date.now() - lastUpdate > 200 && floodSpeed > 0) {
-	floodSpeed = 0;
+	floodSpeed = Math.floor(floodSpeed / 4);
 	console.log(floodSpeed);
     }
 }, 200);
