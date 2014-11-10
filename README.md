@@ -1,1 +1,3 @@
-Go to [mane-mate](https://github.com/prabhasp/mane-mate), all code is there now.
+Code is at [mane-mate](https://github.com/prabhasp/mane-mate).
+
+Images are inside the static folder.
