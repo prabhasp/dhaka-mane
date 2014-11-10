@@ -1,4 +1,0 @@
-gevent
-gevent-socketio
-pyserial
-
